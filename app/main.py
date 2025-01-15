@@ -57,8 +57,8 @@ def predict_protein(uniprot_id: str):
     else:
         raise HTTPException(status_code=404, detail="PDB URL not found for the protein")
 
-    print(protein_data)
-    return {"pdb_protein_data": [pdb_data, protein_data]}
+    print(protein_data[0].get('uniprotSequence'))
+    return {"protein_sequence": protein_data[0].get('uniprotSequence')}
 
 
         

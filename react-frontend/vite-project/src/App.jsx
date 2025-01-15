@@ -9,18 +9,6 @@ function ProteinVisualization() {
   const [error, setError] = useState('');
   const viewerRef = useRef(null);  // Reference for 3Dmol.js viewer
   
-  // Fetch protein data from the backend
-  const fetchProteinData = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/getprotein/${uniprotId}`);
-      setProteinData(response.data[1]);
-      //render3Dmol(response.data[0]);  // Render the 3D structure
-    } catch (error) {
-      setError('Protein not found');
-    }
-  };
-
-  // Function to render 3Dmol.js model in the viewer
   const render3Dmol = (pdbData) => {
     if (viewerRef.current) {
       const viewer = window.VMD(viewerRef.current);
@@ -30,6 +18,21 @@ function ProteinVisualization() {
       viewer.render();
     }
   };
+  // Fetch protein data from the backend
+  const fetchProteinData = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/getprotein/${uniprotId}`);
+      console.log(response);
+      setProteinData(response.data.protein_sequence);
+      //render3Dmol(response.data.pdb_data);  // Render the 3D structure
+     // console.log(response.data.protein_data)
+    } catch (error) {
+      setError('Protein not found');
+    }
+  };
+
+  // Function to render 3Dmol.js model in the viewer
+  
 
   return (
     <div className="App">
@@ -48,21 +51,19 @@ function ProteinVisualization() {
         <h2>Protein Data:</h2>
         {proteinData && (
           <div>
-            <h3>{proteinData.protein_data.name}</h3>
-            <p>{proteinData.protein_data.description}</p>
-            {/* You can display other protein metadata here */}
+            <h3>{proteinData}</h3>
           </div>
         )}
       </div>
       
-      <div>
+      {/* <div>
         <h2>Protein Structure:</h2>
-        {/* This div will hold the 3Dmol.js viewer */}
+       
         <div
           ref={viewerRef}
           style={{ width: '100%', height: '500px' }}
         ></div>
-      </div>
+      </div> */}
     </div>
   );
 }

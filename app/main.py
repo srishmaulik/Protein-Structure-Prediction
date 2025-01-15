@@ -4,9 +4,20 @@ import os
 import requests
 import py3Dmol
 from stmol import showmol
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+
 
 @app.get("/")
 def read_root():
@@ -46,8 +57,8 @@ def predict_protein(uniprot_id: str):
     else:
         raise HTTPException(status_code=404, detail="PDB URL not found for the protein")
 
-
-    return {"pdb_data": pdb_data, "protein_data": protein_data}
+    print(protein_data)
+    return {"pdb_protein_data": [pdb_data, protein_data]}
 
 
         

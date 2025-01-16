@@ -18,26 +18,6 @@ app.add_middleware(
 )
 
 
-
-@app.get("/")
-def read_root():
-    app_name = os.getenv("APP_NAME", "Protein Predicter")
-    return {"message": f"Welcome to {app_name}!"}
-
-
-
-
-def rendermol(pdb):
-    pdbview = py3Dmol.view()
-    pdbview.addModel(pdb, 'pdb')
-    pdbview.setStyle({'cartoon':{'color':'spectrum'}})
-    pdbview.setBackGroundColor('white')
-    pdbview.zoomTo()
-    pdbview.zoom(2, 800)
-    pdbview.spin(True)
-    showmol(pdbview, height=500, width=800)
-
-
 @app.get("/getprotein/{uniprot_id}")
 def predict_protein(uniprot_id: str):
     data = ""
@@ -56,9 +36,8 @@ def predict_protein(uniprot_id: str):
         pdb_data = requests.get(pdb_url).text
     else:
         raise HTTPException(status_code=404, detail="PDB URL not found for the protein")
-
-    print(protein_data[0].get('uniprotSequence'))
-    return {"protein_sequence": protein_data[0].get('uniprotSequence')}
+    print(pdb_data)
+    return {"protein_sequence": protein_data[0].get('uniprotSequence'), "pdb" : pdb_data, "protein_name": protein_data[0].get("uniprotDescription"), "protein_id" : protein_data[0].get("uniprotId")}
 
 
         

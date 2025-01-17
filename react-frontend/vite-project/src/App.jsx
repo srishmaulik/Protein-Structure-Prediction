@@ -20,7 +20,7 @@ const Atom = ({position, element}) => {
   const color = elementColors[element] || 0x888888;
   return(
     <mesh position={position}>
-      <sphereGeometry args={[0.3, 32, 32]} />
+      <sphereGeometry args={[0.6, 32, 32]} />
       <meshStandardMaterial color={color} />
     </mesh>
   );
@@ -52,7 +52,7 @@ const ProteinModel = ({pdbText}) => {
 };
 
 const ProteinViewer = ({pdbText}) => (
-  <Canvas camera={{ position: [0, 0, 20], fov: 75 }}>
+  <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
     <ambientLight intensity={0.5} />
     <directionalLight position={[5, 5, 5]} intensity={1} />
     <ProteinModel pdbText={pdbText} />
@@ -69,6 +69,7 @@ function ProteinVisualization() {
   const [error, setError] = useState('');
   const viewerRef = useRef(null);  // Reference for 3Dmol.js viewer
   const [pdbText, setPdbText] = useState('');
+  const [GPT_text, set_GPT_text] = useState('');
   const[loading, setIsLoading] = useState(false);
 
     // Fetch protein data from the backend
@@ -81,6 +82,7 @@ function ProteinVisualization() {
       setUniprotId(response.data.protein_id);
       setProteinName(response.data.protein_name);
       setPdbText(response.data.pdb);
+      set_GPT_text(response.data.reply)
     } catch (error) {
       setError('Protein not found');
     }
@@ -114,6 +116,10 @@ function ProteinVisualization() {
             <h3>{proteinName}</h3>
             </div>
             )}
+      </div>
+      <div>
+        <h2>Generated Protein Description:</h2>
+        {GPT_text ? <p>{GPT_text}</p> : <p>Loading description...</p>}
       </div>
       {pdbText && <ProteinViewer pdbText={pdbText} />}
       
